@@ -150,10 +150,12 @@ function initScratchCard() {
 
     ctx.globalCompositeOperation = "source-over";
 
+    // Gold Layer
     ctx.fillStyle = "#D4AF37";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = "#fff";
+    // Text
+    ctx.fillStyle = "#ffffff";
     ctx.font = "bold 30px Poppins";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -164,41 +166,42 @@ function initScratchCard() {
         canvas.height / 2
     );
 }
-
 window.addEventListener("load", initScratchCard);
 
-// Gold layer
-ctx.fillStyle = "#D4AF37";
-ctx.fillRect(0,0,canvas.width,canvas.height);
-
-ctx.fillStyle = "#fff";
-ctx.font = "bold 30px Poppins";
-ctx.textAlign = "center";
-ctx.fillText(
-    "Scratch Here ✨",
-    canvas.width/2,
-    canvas.height/2
-);
-
 let scratching = false;
+let revealed = false;
 
-canvas.addEventListener("mousedown", () => {
+// Prevent page scrolling while scratching
+canvas.style.touchAction = "none";
+
+canvas.addEventListener("pointerdown", (e) => {
     scratching = true;
-    console.log("Mouse Down");
+    scratch(e); // Scratch immediately on touch
 });
 
-canvas.addEventListener("mouseup", () => scratching = false);
+canvas.addEventListener("pointermove", (e) => {
+    if (scratching) {
+        scratch(e);
+    }
+});
 
-canvas.addEventListener("mouseleave", () => scratching = false);
+canvas.addEventListener("pointerup", () => {
+    scratching = false;
+});
 
-canvas.addEventListener("mousemove", (e) => {
-    console.log("Moving");
-    scratch(e);
+canvas.addEventListener("pointerleave", () => {
+    scratching = false;
+});
+
+canvas.addEventListener("pointercancel", () => {
+    scratching = false;
 });
 
 function scratch(e){
 
     if(!scratching) return;
+
+    e.preventDefault();
 
     const rect = canvas.getBoundingClientRect();
 
@@ -217,10 +220,9 @@ function scratch(e){
 
     const percent = getScratchedPercentage();
 
-    if(percent > 60){
+    if(percent > 60 && !revealed){
 
         canvas.style.transition = "opacity .8s";
-
         canvas.style.opacity = "0";
 
         document
@@ -228,9 +230,7 @@ function scratch(e){
             .classList.add("revealed");
 
         launchConfetti();
-
     }
-
 }
 
 function getScratchedPercentage() {

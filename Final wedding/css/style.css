@@ -850,6 +850,9 @@ body{
     height:100%;
     cursor:pointer;
     z-index:2;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .confetti{
