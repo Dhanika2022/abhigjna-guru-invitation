@@ -1,0 +1,21 @@
+@media(max-width:768px){
+
+.content h1{
+
+font-size:52px;
+
+}
+
+.content h2{
+
+font-size:38px;
+
+}
+
+button{
+
+width:100%;
+
+}
+
+}
