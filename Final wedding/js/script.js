@@ -220,17 +220,28 @@ function scratch(e){
 
     const percent = getScratchedPercentage();
 
-    if(percent > 60 && !revealed){
+    if (percent > 60 && !revealed) {
 
-        canvas.style.transition = "opacity .8s";
-        canvas.style.opacity = "0";
+    revealed = true;
+    scratching = false;
 
-        document
-            .querySelector(".scratch-card")
-            .classList.add("revealed");
+    launchConfetti();
 
-        launchConfetti();
-    }
+    // Fade away the scratch layer
+    canvas.style.transition = "opacity 1s ease";
+    canvas.style.opacity = "0";
+    canvas.style.pointerEvents = "none";
+
+    // Wait for fade + confetti, then scroll
+    setTimeout(() => {
+
+        const countdown = document.getElementById("countdown");
+
+        smoothScrollTo(countdown.offsetTop, 3500);
+
+    }, 1800);
+
+}
 }
 
 function getScratchedPercentage() {
@@ -246,6 +257,36 @@ function getScratchedPercentage() {
     }
 
     return (transparent / (canvas.width * canvas.height)) * 100;
+}
+
+function smoothScrollTo(targetY, duration = 3000) {
+
+    const startY = window.pageYOffset;
+    const distance = targetY - startY;
+    const startTime = performance.now();
+
+    function easeInOutCubic(t) {
+        return t < 0.5
+            ? 4 * t * t * t
+            : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function animation(currentTime) {
+
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        window.scrollTo(
+            0,
+            startY + distance * easeInOutCubic(progress)
+        );
+
+        if (progress < 1) {
+            requestAnimationFrame(animation);
+        }
+    }
+
+    requestAnimationFrame(animation);
 }
 
 function launchConfetti() {
